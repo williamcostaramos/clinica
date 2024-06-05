@@ -7,6 +7,9 @@ use App\Http\Requests\UserCreateRequest;
 use App\Repository\UserRepository;
 use App\Services\UserCreatedService;
 use App\Services\UserLoginService;
+use Illuminate\Http\Request;
+use Tymon\JWTAuth\Facades\JWTAuth;
+use Illuminate\Support\Facades\Auth;
 
 class AuthController extends Controller
 {
@@ -48,7 +51,7 @@ class AuthController extends Controller
 
     public function logout(){
         $response =['message'=>"User logout with success"];
-        auth()->logout();
+        JWTAuth::invalidate(JWTAuth::getToken());
         return $response;
     }
 }
