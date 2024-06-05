@@ -23,9 +23,11 @@ class UserCreatedService
             $this->response['error'] = "Bad Request";
             return $this->response;
         }
+
         $user = $this->fillFields($request);
         $this->userRepository->create($user);
-        $this->response['user'] = $this->login($user->cpf, $user->password);
+
+        $this->response['user'] = $this->login($request->input('cpf'), $request->input('password'));
         return $this->response;
     }
 
@@ -42,13 +44,13 @@ class UserCreatedService
         $newUser->email = $email;
         $newUser->cpf = $cpf;
         $newUser->password = $hash;
+
         return $newUser;
     }
 
     private function login($cpf, $password)
     {
         $token = auth()->attempt(['cpf' => $cpf, 'password' => $password]);
-
         if (!$token) {
             $response['error'] = "Error ao Cadastrar Usuário";
             return $response;
