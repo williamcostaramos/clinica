@@ -2,22 +2,34 @@
 
 namespace App\Http\Controllers;
 
-
+use App\Http\Requests\LoginRequest;
 use App\Http\Requests\UserCreateRequest;
-use App\Services\UserService;
+use App\Repository\UserRepository;
+use App\Services\UserCreatedService;
+use App\Services\UserLoginService;
 
 class AuthController extends Controller
 {
-    protected $service;
+    protected $userCreatedService;
+    protected $userLoginService;
+    protected $repository;
 
-    public function __construct(UserService $service)
+    public function __construct(UserCreatedService $userCreatedService, UserLoginService $userLoginService, UserRepository $repository)
     {
-        $this->service = $service;
+        $this->userCreatedService = $userCreatedService;
+        $this->repository = $repository;
+        $this->userLoginService = $userLoginService;
+    }
+
+    public function index()
+    {
+        $users = $this->repository->all(10);
+        return response()->json($users, 200);
     }
 
     public function register(UserCreateRequest $request)
     {
-        $response = $this->service->register($request);
+        $response = $this->userCreatedService->register($request);
         return response()->json($response, 201);
     }
 
@@ -26,5 +38,17 @@ class AuthController extends Controller
         return response()->json([
             'error' => 'Não Autorizado'
         ], 401);
+    }
+
+    public function login(LoginRequest $request)
+    {
+        $response = $this->userLoginService->login($request);
+        return response()->json($response, 200);
+    }
+
+    public function logout(){
+        $response =['message'=>"User logout with success"];
+        auth()->logout();
+        return $response;
     }
 }

@@ -6,7 +6,7 @@ use App\Http\Requests\UserCreateRequest;
 use App\Repository\UserRepository;
 use App\Models\User;
 
-class UserService
+class UserCreatedService
 {
     protected $userRepository;
     private $response;
@@ -20,7 +20,7 @@ class UserService
     public function register(UserCreateRequest $request)
     {
         if (!$request->validated()) {
-            $this->response['error'] = $request->messages();
+            $this->response['error'] = "Bad Request";
             return $this->response;
         }
         $user = $this->fillFields($request);
@@ -53,7 +53,6 @@ class UserService
             $response['error'] = "Error ao Cadastrar Usuário";
             return $response;
         }
-
         return auth()->user();
     }
 }
